@@ -51,24 +51,27 @@ class PNet(Network):
         layer_factory = LayerFactory(self)
 
         layer_factory.new_feed(name='data', layer_shape=(None, None, None, 3))
-        layer_factory.new_conv(name='conv1', kernel_size=(3, 3), channels_output=10, stride_size=(1, 1),
-                               padding='VALID', relu=False)
+        layer_factory.new_conv(name='conv1', kernel_size=(3, 3), channels_output=10,
+                               stride_size=(1, 1), padding='VALID', relu=False)
         layer_factory.new_prelu(name='prelu1')
-        layer_factory.new_max_pool(name='pool1', kernel_size=(2, 2), stride_size=(2, 2))
-        layer_factory.new_conv(name='conv2', kernel_size=(3, 3), channels_output=16, stride_size=(1, 1),
-                               padding='VALID', relu=False)
+        layer_factory.new_max_pool(name='pool1', kernel_size=(2, 2),
+                                   stride_size=(2, 2))
+        layer_factory.new_conv(name='conv2', kernel_size=(3, 3), channels_output=16,
+                               stride_size=(1, 1), padding='VALID', relu=False)
         layer_factory.new_prelu(name='prelu2')
-        layer_factory.new_conv(name='conv3', kernel_size=(3, 3), channels_output=32, stride_size=(1, 1),
-                               padding='VALID', relu=False)
+        layer_factory.new_conv(name='conv3', kernel_size=(3, 3), channels_output=32,
+                               stride_size=(1, 1), padding='VALID', relu=False)
         layer_factory.new_prelu(name='prelu3')
-        layer_factory.new_conv(name='conv4-1', kernel_size=(1, 1), channels_output=2, stride_size=(1, 1), relu=False)
+        layer_factory.new_conv(name='conv4-1', kernel_size=(1, 1), channels_output=2,
+                               stride_size=(1, 1), relu=False)
         layer_factory.new_softmax(name='prob1', axis=3)
 
-        layer_factory.new_conv(name='conv4-2', kernel_size=(1, 1), channels_output=4, stride_size=(1, 1),
-                               input_layer_name='prelu3', relu=False)
+        layer_factory.new_conv(name='conv4-2', kernel_size=(1, 1), channels_output=4,
+                               stride_size=(1, 1), input_layer_name='prelu3', relu=False)
 
     def _feed(self, image):
-        return self._session.run(['pnet/conv4-2/BiasAdd:0', 'pnet/prob1:0'], feed_dict={'pnet/input:0': image})
+        return self._session.run(['pnet/conv4-2/BiasAdd:0', 'pnet/prob1:0'],
+                                 feed_dict={'pnet/input:0': image})
 
 
 class RNet(Network):
@@ -81,26 +84,30 @@ class RNet(Network):
         layer_factory = LayerFactory(self)
 
         layer_factory.new_feed(name='data', layer_shape=(None, 24, 24, 3))
-        layer_factory.new_conv(name='conv1', kernel_size=(3, 3), channels_output=28, stride_size=(1, 1),
-                               padding='VALID', relu=False)
+        layer_factory.new_conv(name='conv1', kernel_size=(3, 3), channels_output=28,
+                               stride_size=(1, 1), padding='VALID', relu=False)
         layer_factory.new_prelu(name='prelu1')
         layer_factory.new_max_pool(name='pool1', kernel_size=(3, 3), stride_size=(2, 2))
-        layer_factory.new_conv(name='conv2', kernel_size=(3, 3), channels_output=48, stride_size=(1, 1),
-                               padding='VALID', relu=False)
+        layer_factory.new_conv(name='conv2', kernel_size=(3, 3), channels_output=48,
+                               stride_size=(1, 1), padding='VALID', relu=False)
         layer_factory.new_prelu(name='prelu2')
-        layer_factory.new_max_pool(name='pool2', kernel_size=(3, 3), stride_size=(2, 2), padding='VALID')
-        layer_factory.new_conv(name='conv3', kernel_size=(2, 2), channels_output=64, stride_size=(1, 1),
+        layer_factory.new_max_pool(name='pool2', kernel_size=(3, 3), stride_size=(2, 2),
+                                   padding='VALID')
+        layer_factory.new_conv(name='conv3', kernel_size=(2, 2),
+                               channels_output=64, stride_size=(1, 1),
                                padding='VALID', relu=False)
         layer_factory.new_prelu(name='prelu3')
-        layer_factory.new_fully_connected(name='fc1', output_count=128, relu=False)  # shouldn't the name be "fc1"?
+        layer_factory.new_fully_connected(name='fc1', output_count=128, relu=False) 
         layer_factory.new_prelu(name='prelu4')
-        layer_factory.new_fully_connected(name='fc2-1', output_count=2, relu=False)   # shouldn't the name be "fc2-1"?
+        layer_factory.new_fully_connected(name='fc2-1', output_count=2, relu=False) 
         layer_factory.new_softmax(name='prob1', axis=1)
 
-        layer_factory.new_fully_connected(name='fc2-2', output_count=4, relu=False, input_layer_name='prelu4')
+        layer_factory.new_fully_connected(name='fc2-2', output_count=4, relu=False,
+                                          input_layer_name='prelu4')
 
     def _feed(self, image):
-        return self._session.run(['rnet/fc2-2/fc2-2:0', 'rnet/prob1:0'], feed_dict={'rnet/input:0': image})
+        return self._session.run(['rnet/fc2-2/fc2-2:0', 'rnet/prob1:0'],
+                                 feed_dict={'rnet/input:0': image})
 
 
 class ONet(Network):
@@ -111,19 +118,24 @@ class ONet(Network):
         layer_factory = LayerFactory(self)
 
         layer_factory.new_feed(name='data', layer_shape=(None, 48, 48, 3))
-        layer_factory.new_conv(name='conv1', kernel_size=(3, 3), channels_output=32, stride_size=(1, 1),
+        layer_factory.new_conv(name='conv1', kernel_size=(3, 3),
+                               channels_output=32, stride_size=(1, 1),
                                padding='VALID', relu=False)
         layer_factory.new_prelu(name='prelu1')
         layer_factory.new_max_pool(name='pool1', kernel_size=(3, 3), stride_size=(2, 2))
-        layer_factory.new_conv(name='conv2', kernel_size=(3, 3), channels_output=64, stride_size=(1, 1),
+        layer_factory.new_conv(name='conv2', kernel_size=(3, 3),
+                               channels_output=64, stride_size=(1, 1),
                                padding='VALID', relu=False)
         layer_factory.new_prelu(name='prelu2')
-        layer_factory.new_max_pool(name='pool2', kernel_size=(3, 3), stride_size=(2, 2), padding='VALID')
-        layer_factory.new_conv(name='conv3', kernel_size=(3, 3), channels_output=64, stride_size=(1, 1),
+        layer_factory.new_max_pool(name='pool2', kernel_size=(3, 3), stride_size=(2, 2),
+                                   padding='VALID')
+        layer_factory.new_conv(name='conv3', kernel_size=(3, 3),
+                               channels_output=64, stride_size=(1, 1),
                                padding='VALID', relu=False)
         layer_factory.new_prelu(name='prelu3')
         layer_factory.new_max_pool(name='pool3', kernel_size=(2, 2), stride_size=(2, 2))
-        layer_factory.new_conv(name='conv4', kernel_size=(2, 2), channels_output=128, stride_size=(1, 1),
+        layer_factory.new_conv(name='conv4', kernel_size=(2, 2),
+                               channels_output=128, stride_size=(1, 1),
                                padding='VALID', relu=False)
         layer_factory.new_prelu(name='prelu4')
         layer_factory.new_fully_connected(name='fc1', output_count=256, relu=False)
@@ -131,12 +143,15 @@ class ONet(Network):
         layer_factory.new_fully_connected(name='fc2-1', output_count=2, relu=False)
         layer_factory.new_softmax(name='prob1', axis=1)
 
-        layer_factory.new_fully_connected(name='fc2-2', output_count=4, relu=False, input_layer_name='prelu5')
+        layer_factory.new_fully_connected(name='fc2-2', output_count=4, relu=False,
+                                          input_layer_name='prelu5')
 
-        layer_factory.new_fully_connected(name='fc2-3', output_count=10, relu=False, input_layer_name='prelu5')
+        layer_factory.new_fully_connected(name='fc2-3', output_count=10, relu=False,
+                                          input_layer_name='prelu5')
 
     def _feed(self, image):
-        return self._session.run(['onet/fc2-2/fc2-2:0', 'onet/fc2-3/fc2-3:0', 'onet/prob1:0'],
+        return self._session.run(['onet/fc2-2/fc2-2:0',
+                                  'onet/fc2-3/fc2-3:0', 'onet/prob1:0'],
                                  feed_dict={'onet/input:0': image})
 
 
@@ -147,7 +162,9 @@ class StageStatus(object):
     def __init__(self, pad_result: tuple=None, width=0, height=0):
         self.width = width
         self.height = height
-        self.dy = self.edy = self.dx = self.edx = self.y = self.ey = self.x = self.ex = self.tmpw = self.tmph = []
+        self.dy = self.edy = self.dx = self.edx = []
+        self.y = self.ey = self.x = self.ex = []
+        self.tmpw = self.tmph = []
 
         if pad_result is not None:
             self.update(pad_result)
@@ -164,11 +181,13 @@ class MTCNN(object):
         b) Detection of keypoints (left eye, right eye, nose, mouth_left, mouth_right)
     """
 
-    def __init__(self, weights_file: str=None, min_face_size: int=20, steps_threshold: list=None,
+    def __init__(self, weights_file: str=None,
+                 min_face_size: int=20, steps_threshold: list=None,
                  scale_factor: float=0.709):
         """
         Initializes the MTCNN.
-        :param weights_file: file uri with the weights of the P, R and O networks from MTCNN. By default it will load
+        :param weights_file: file uri with the weights of the P, R and O networks from MTCNN. 
+         By default it will load
         the ones bundled with the package.
         :param min_face_size: minimum size of the face to detect
         :param steps_threshold: step's thresholds values
@@ -192,7 +211,7 @@ class MTCNN(object):
         with self.__graph.as_default():
             self.__session = tf.Session(config=config, graph=self.__graph)
 
-            weights = np.load(weights_file).item()
+            weights = np.load(weights_file, allow_pickle=True).item()
             self.__pnet = PNet(self.__session, False)
             self.__pnet.set_weights(weights['PNet'])
 
@@ -239,7 +258,8 @@ class MTCNN(object):
         width_scaled = int(np.ceil(width * scale))
         height_scaled = int(np.ceil(height * scale))
 
-        im_data = cv2.resize(image, (width_scaled, height_scaled), interpolation=cv2.INTER_AREA)
+        im_data = cv2.resize(image, (width_scaled, height_scaled),
+                             interpolation=cv2.INTER_AREA)
 
         # Normalize the image's pixels
         im_data_normalized = (im_data - 127.5) * 0.0078125
@@ -268,7 +288,8 @@ class MTCNN(object):
             dy2 = np.flipud(dy2)
 
         score = imap[(y, x)]
-        reg = np.transpose(np.vstack([dx1[(y, x)], dy1[(y, x)], dx2[(y, x)], dy2[(y, x)]]))
+        reg = np.transpose(np.vstack([dx1[(y, x)], dy1[(y, x)],
+                                      dx2[(y, x)], dy2[(y, x)]]))
 
         if reg.size == 0:
             reg = np.empty(shape=(0, 3))
@@ -397,7 +418,8 @@ class MTCNN(object):
         """
         Detects bounding boxes from the specified image.
         :param img: image to process
-        :return: list containing all the bounding boxes detected with their keypoints.
+        :return: list containing all the bounding boxes 
+                 detected with their keypoints.
         """
         if img is None or not hasattr(img, "shape"):
             raise InvalidImage("Image not valid.")
@@ -425,7 +447,8 @@ class MTCNN(object):
 
             bounding_boxes.append({
                     'box': [int(bounding_box[0]), int(bounding_box[1]),
-                            int(bounding_box[2]-bounding_box[0]), int(bounding_box[3]-bounding_box[1])],
+                            int(bounding_box[2]-bounding_box[0]),
+                            int(bounding_box[3]-bounding_box[1])],
                     'confidence': bounding_box[-1],
                     'keypoints': {
                         'left_eye': (int(keypoints[0]), int(keypoints[5])),
@@ -462,7 +485,8 @@ class MTCNN(object):
             out1 = np.transpose(out[1], (0, 2, 1, 3))
 
             boxes, _ = self.__generate_bounding_box(out1[0, :, :, 1].copy(),
-                                                    out0[0, :, :, :].copy(), scale, self.__steps_threshold[0])
+                                                    out0[0, :, :, :].copy(),
+                                                    scale, self.__steps_threshold[0])
 
             # inter-scale nms
             pick = self.__nms(boxes.copy(), 0.5, 'Union')
@@ -484,11 +508,13 @@ class MTCNN(object):
             qq3 = total_boxes[:, 2] + total_boxes[:, 7] * regw
             qq4 = total_boxes[:, 3] + total_boxes[:, 8] * regh
 
-            total_boxes = np.transpose(np.vstack([qq1, qq2, qq3, qq4, total_boxes[:, 4]]))
+            total_boxes = np.transpose(np.vstack([qq1, qq2,
+                                                  qq3, qq4, total_boxes[:, 4]]))
             total_boxes = self.__rerec(total_boxes.copy())
 
             total_boxes[:, 0:4] = np.fix(total_boxes[:, 0:4]).astype(np.int32)
-            status = StageStatus(self.__pad(total_boxes.copy(), stage_status.width, stage_status.height),
+            status = StageStatus(self.__pad(total_boxes.copy(),
+                                            stage_status.width, stage_status.height),
                                  width=stage_status.width, height=stage_status.height)
 
         return total_boxes, status
@@ -512,11 +538,15 @@ class MTCNN(object):
         for k in range(0, num_boxes):
             tmp = np.zeros((int(stage_status.tmph[k]), int(stage_status.tmpw[k]), 3))
 
-            tmp[stage_status.dy[k] - 1:stage_status.edy[k], stage_status.dx[k] - 1:stage_status.edx[k], :] = \
-                img[stage_status.y[k] - 1:stage_status.ey[k], stage_status.x[k] - 1:stage_status.ex[k], :]
+            tmp[stage_status.dy[k] - 1:stage_status.edy[k],
+                stage_status.dx[k] - 1:stage_status.edx[k], :] = \
+                img[stage_status.y[k] - 1:stage_status.ey[k],
+                    stage_status.x[k] - 1:stage_status.ex[k], :]
 
-            if tmp.shape[0] > 0 and tmp.shape[1] > 0 or tmp.shape[0] == 0 and tmp.shape[1] == 0:
-                tempimg[:, :, :, k] = cv2.resize(tmp, (24, 24), interpolation=cv2.INTER_AREA)
+            if tmp.shape[0] > 0 and tmp.shape[1] > 0 or \
+               tmp.shape[0] == 0 and tmp.shape[1] == 0:
+                tempimg[:, :, :, k] = cv2.resize(tmp, (24, 24),
+                                                 interpolation=cv2.INTER_AREA)
 
             else:
                 return np.empty(shape=(0,)), stage_status
@@ -534,7 +564,8 @@ class MTCNN(object):
 
         ipass = np.where(score > self.__steps_threshold[1])
 
-        total_boxes = np.hstack([total_boxes[ipass[0], 0:4].copy(), np.expand_dims(score[ipass].copy(), 1)])
+        total_boxes = np.hstack([total_boxes[ipass[0], 0:4].copy(),
+                                 np.expand_dims(score[ipass].copy(), 1)])
 
         mv = out0[:, ipass[0]]
 
@@ -561,7 +592,8 @@ class MTCNN(object):
 
         total_boxes = np.fix(total_boxes).astype(np.int32)
 
-        status = StageStatus(self.__pad(total_boxes.copy(), stage_status.width, stage_status.height),
+        status = StageStatus(self.__pad(total_boxes.copy(),
+                                        stage_status.width, stage_status.height),
                              width=stage_status.width, height=stage_status.height)
 
         tempimg = np.zeros((48, 48, 3, num_boxes))
@@ -573,8 +605,10 @@ class MTCNN(object):
             tmp[status.dy[k] - 1:status.edy[k], status.dx[k] - 1:status.edx[k], :] = \
                 img[status.y[k] - 1:status.ey[k], status.x[k] - 1:status.ex[k], :]
 
-            if tmp.shape[0] > 0 and tmp.shape[1] > 0 or tmp.shape[0] == 0 and tmp.shape[1] == 0:
-                tempimg[:, :, :, k] = cv2.resize(tmp, (48, 48), interpolation=cv2.INTER_AREA)
+            if tmp.shape[0] > 0 and tmp.shape[1] > 0 or \
+               tmp.shape[0] == 0 and tmp.shape[1] == 0:
+                tempimg[:, :, :, k] = cv2.resize(tmp, (48, 48),
+                                                 interpolation=cv2.INTER_AREA)
             else:
                 return np.empty(shape=(0,)), np.empty(shape=(0,))
 
@@ -594,15 +628,18 @@ class MTCNN(object):
 
         points = points[:, ipass[0]]
 
-        total_boxes = np.hstack([total_boxes[ipass[0], 0:4].copy(), np.expand_dims(score[ipass].copy(), 1)])
+        total_boxes = np.hstack([total_boxes[ipass[0], 0:4].copy(),
+                                 np.expand_dims(score[ipass].copy(), 1)])
 
         mv = out0[:, ipass[0]]
 
         w = total_boxes[:, 2] - total_boxes[:, 0] + 1
         h = total_boxes[:, 3] - total_boxes[:, 1] + 1
 
-        points[0:5, :] = np.tile(w, (5, 1)) * points[0:5, :] + np.tile(total_boxes[:, 0], (5, 1)) - 1
-        points[5:10, :] = np.tile(h, (5, 1)) * points[5:10, :] + np.tile(total_boxes[:, 1], (5, 1)) - 1
+        points[0:5, :] = np.tile(w, (5, 1)) * points[0:5, :] + \
+                         np.tile(total_boxes[:, 0], (5, 1)) - 1
+        points[5:10, :] = np.tile(h, (5, 1)) * points[5:10, :] + \
+                          np.tile(total_boxes[:, 1], (5, 1)) - 1
 
         if total_boxes.shape[0] > 0:
             total_boxes = self.__bbreg(total_boxes.copy(), np.transpose(mv))
